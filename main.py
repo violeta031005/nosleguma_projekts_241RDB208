@@ -3,14 +3,11 @@ import datetime
 import time
 import threading
 
-# ---------------------------
-# Klase mājas darba pārstāvei
-# ---------------------------
 class MajasDarbs:
     def __init__(self, nosaukums, diena, laiks):
         self.nosaukums = nosaukums
         self.diena = diena.capitalize()
-        self.laiks = laiks  # Formāts: "HH:MM"
+        self.laiks = laiks  
 
     def to_dict(self):
         return {
@@ -19,9 +16,6 @@ class MajasDarbs:
             "laiks": self.laiks
         }
 
-# ---------------------------
-# Darbu saglabāšana un ielāde
-# ---------------------------
 def saglaba_darbus(darbi, fails="darbi.json"):
     ar_open = [darb.to_dict() for darb in darbi]
     with open(fails, "w", encoding="utf-8") as f:
@@ -35,9 +29,6 @@ def ielade_darbus(fails="darbi.json"):
     except FileNotFoundError:
         return []
 
-# ---------------------------
-# Funkcija, kas pārbauda, vai laiks atbilst kādam darbam
-# ---------------------------
 def atgadinajumu_cikls():
     while True:
         tagad = datetime.datetime.now()
@@ -46,27 +37,20 @@ def atgadinajumu_cikls():
 
         for darbs in darbi:
             if darbs.diena == diena and darbs.laiks == laiks:
-                print(f"\n🔔 ATGĀDINĀJUMS: {darbs.nosaukums} ({darbs.diena} {darbs.laiks}) 🔔\n")
+                print(f"\n Atgādinājums: {darbs.nosaukums} ({darbs.diena} {darbs.laiks}) 🔔\n")
         time.sleep(60)
 
-# ---------------------------
-# Jauna darba pievienošana
-# ---------------------------
 def pievieno_darbu():
-    nos = input("Ievadi darba nosaukumu (piemēram: Izvest atkritumus): ")
-    diena = input("Kura diena? (piemēram: Pirmdiena): ")
-    laiks = input("Laiks? (HH:MM formātā, piem. 08:30): ")
+    nos = input("Ievadi darba nosaukumu: ")
+    diena = input("Kura diena? ")
+    laiks = input("Laiks? ")
     darb = MajasDarbs(nos, diena, laiks)
     darbi.append(darb)
     saglaba_darbus(darbi)
-    print("✅ Darbs pievienots!")
+    print("Darbs pievienots!")
 
-# ---------------------------
-# Galvenais kods
-# ---------------------------
 darbi = ielade_darbus()
 
-# Sāk fonā atgādinājumu ciklu
 t = threading.Thread(target=atgadinajumu_cikls, daemon=True)
 t.start()
 
@@ -75,19 +59,19 @@ while True:
     print("1. Parādīt visus darbus")
     print("2. Pievienot jaunu darbu")
     print("3. Iziet")
-    izvēle = input("Tava izvēle: ")
+    izvele = input("Tava izvēle: ")
 
-    if izvēle == "1":
+    if izvele == "1":
         if darbi:
-            print("\n📋 Esošie darbi:")
+            print("\nIr jāizpilda:")
             for d in darbi:
-                print(f"🔹 {d.nosaukums} – {d.diena} {d.laiks}")
+                print(f"{d.nosaukums} – {d.diena} {d.laiks}")
         else:
-            print("⚠️ Nav neviena ierakstīta darba.")
-    elif izvēle == "2":
+            print("Nav neviena ierakstīta darba.")
+    elif izvele == "2":
         pievieno_darbu()
-    elif izvēle == "3":
-        print("👋 Programma beidz darbu.")
+    elif izvele == "3":
+        print("Programma beidz darbu.")
         break
     else:
-        print("❌ Nepareiza izvēle.")
+        print("Nepareiza izvēle.")
